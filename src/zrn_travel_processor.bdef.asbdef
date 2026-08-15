@@ -1,0 +1,36 @@
+projection;
+strict ( 2 );
+use draft;
+
+define behavior for ZRN_TRAVEL_PROCESSOR alias Travel
+{
+  use create;
+  use update;
+  use delete;
+
+  use association _Booking { create; with draft; }
+
+    use action Edit;
+  use action Activate;
+  use action Discard;
+  use action Resume;
+  use action Prepare;
+}
+
+define behavior for ZRN_BOOKING_PROCESSOR alias Booking
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft; }
+  use association _BookingSupplement { create;  with draft; }
+}
+
+define behavior for ZRN_BOOKSUPPL_PROCESSOR alias BookingSupplement
+{
+  use update;
+  use delete;
+
+  use association _Travel { with draft; }
+  use association _Booking { with draft; }
+}

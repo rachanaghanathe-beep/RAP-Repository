@@ -1,0 +1,15 @@
+@EndUserText.label: 'Travel Processor'
+define service ZRN_TRAVEL_PROCESSOR_USECASE {
+  expose ZRN_TRAVEL_PROCESSOR     as Travel;
+  expose ZRN_BOOKING_PROCESSOR    as Booking;
+  expose ZRN_BOOKSUPPL_PROCESSOR  as BookSuppl;
+  expose /DMO/I_Agency            as Agency;
+  expose /DMO/I_Customer          as Customer;
+  expose /DMO/I_Carrier           as Carrier;
+  expose /DMO/I_Connection        as Connection;
+  expose /DMO/I_Supplement        as Supplement;
+  expose I_Currency               as Currency;
+  expose I_Country                as Country;
+  expose /DMO/I_Overall_Status_VH as TravelStatus;
+  expose /DMO/I_Booking_Status_VH as BookingStatus;
+}

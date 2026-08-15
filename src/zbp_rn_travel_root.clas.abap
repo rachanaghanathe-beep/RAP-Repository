@@ -1,0 +1,5 @@
+CLASS zbp_rn_travel_root DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zrn_travel_root.
+ENDCLASS.
+
+CLASS zbp_rn_travel_root IMPLEMENTATION.
+ENDCLASS.

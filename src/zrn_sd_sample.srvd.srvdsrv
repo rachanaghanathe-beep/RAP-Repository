@@ -1,0 +1,4 @@
+@EndUserText.label: 'Service definition sample'
+define service ZRN_SD_SAMPLE {
+  expose ZRN_C_SAMPLE as Travel;
+}

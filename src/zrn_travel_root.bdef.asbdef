@@ -1,17 +1,18 @@
-managed implementation in class zbp_rn_travel_root unique;
+managed ;
 strict ( 2 );
 with draft;
 
 define behavior for ZRN_TRAVEL_ROOT alias Travel
+implementation in class zbp_rn_travel_root unique
 persistent table /dmo/travel_m
 draft table ztravel_draft
 lock master
 total etag LastChangedAt
 authorization master ( instance )
 etag master LastChangedAt
-
+early numbering
 {
-  create ( authorization : global );
+   create ( authorization : global );
   update;
   delete;
 
@@ -21,9 +22,11 @@ etag master LastChangedAt
   draft action Resume;
   draft determine action Prepare;
 
- field ( readonly : update ) TravelId;
+// field ( readonly : update) TravelId;
+field ( readonly ) TravelId;
 
   association _Booking { create; with draft; }
+//association _Booking { create ( early numbering ); with draft; }
 
   mapping for /dmo/travel_m{
 TravelId = travel_id;
@@ -45,19 +48,24 @@ Description = description;
 }
 
 define behavior for ZRN_BOOKING alias Booking
+implementation in class zbp_rn_booking unique
 persistent table /dmo/booking_m
 draft table zbook_draft
 lock dependent by _Travel
 authorization dependent by _Travel
 etag master LastChangedAt
+early numbering
 {
   update;
   delete;
 
-  field ( readonly ) TravelId;
+//  field ( readonly ) TravelId;
+field ( readonly ) TravelId, BookingId;
 
   association _Travel { with draft; }
-  association _BookingSupplement { create; with draft; }
+//  association _BookingSupplement { create; with draft; }
+  association _BookingSupplement { create ( authorization : global ); with draft; }
+
 
   mapping for /dmo/booking_m{
   TravelId = travel_id;
@@ -75,15 +83,19 @@ LastChangedAt = last_changed_at;
 }
 
 define behavior for ZRN_BOOKSUPPL alias BookingSupplement
+implementation in class zbp_rn_bookingsuppl unique
 persistent table /dmo/booksuppl_m
 draft table zbooksuppl_draft
 lock dependent by _Travel
 authorization dependent by _Travel
 etag master LastChangedAt
+early numbering
 {
+
   update;
   delete;
-  field ( readonly ) TravelId, BookingId;
+//  field ( readonly ) TravelId, BookingId;
+field ( readonly ) TravelId, BookingId, BookingSupplementId;
   association _Travel { with draft; }
   association _Booking { with draft; }
   mapping for /dmo/booksuppl_m{

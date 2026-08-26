@@ -1,0 +1,5 @@
+CLASS zbp_rn_bookingsuppl DEFINITION PUBLIC ABSTRACT FINAL FOR BEHAVIOR OF zrn_travel_root.
+ENDCLASS.
+
+CLASS zbp_rn_bookingsuppl IMPLEMENTATION.
+ENDCLASS.

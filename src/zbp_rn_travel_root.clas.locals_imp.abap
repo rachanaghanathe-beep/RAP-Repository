@@ -6,6 +6,8 @@ CLASS lhc_Travel DEFINITION INHERITING FROM cl_abap_behavior_handler.
 
     METHODS get_global_authorizations FOR GLOBAL AUTHORIZATION
       REQUEST requested_authorizations FOR Travel RESULT result.
+    METHODS get_instance_features FOR INSTANCE FEATURES
+      keys REQUEST requested_features FOR Travel RESULT result.
 
     METHODS earlynumbering_create FOR NUMBERING
        entities FOR CREATE Travel.
@@ -151,5 +153,39 @@ CLASS lhc_Travel IMPLEMENTATION.
   endmethod.
 
 
+
+  METHOD get_instance_features.
+
+  " 1. Fetch the status and fee values for the records currently requested by the UI
+    READ ENTITIES OF ZRN_TRAVEL_ROOT IN LOCAL MODE
+      ENTITY Travel
+        FIELDS ( OverallStatus BookingFee ) WITH CORRESPONDING #( keys )
+      RESULT DATA(lt_travel).
+
+
+      " 2. Construct the dynamic feature rules row-by-row
+    result = VALUE #( FOR ls_travel IN lt_travel (
+        %tky = ls_travel-%tky " Automatically matches draft vs active record contexts
+
+        " --- RULE 1 & 2: DYNAMIC DELETE BUTTON ---
+        " If status is Accepted ('A'), disable delete. Otherwise, keep it active.
+        %features-%delete = COND #( WHEN ls_travel-OverallStatus = 'Accepted'
+                                    THEN if_abap_behv=>fc-o-disabled
+                                    ELSE if_abap_behv=>fc-o-enabled )
+
+        " --- RULE 3: DYNAMIC BOOKING FEE FIELD ---
+        " If status is Accepted ('A'), lock the field to Read-Only.
+        " If it's a broken old record (status is blank/INITIAL), leave it unrestricted so it doesn't crash!
+        %features-%field-BookingFee = COND #( WHEN ls_travel-OverallStatus = 'Accepted'
+                                              THEN if_abap_behv=>fc-f-read_only
+                                              ELSE if_abap_behv=>fc-f-unrestricted )
+
+        " --- DYNAMIC OVERALL STATUS FIELD ---
+        " Always keep the status field unrestricted so they can change it from Open to Accepted.
+        %features-%field-OverallStatus = if_abap_behv=>fc-f-unrestricted
+    ) ).
+
+
+  ENDMETHOD.
 
 ENDCLASS.
